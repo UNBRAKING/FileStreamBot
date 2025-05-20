@@ -32,8 +32,16 @@ class Server:
     PING_INTERVAL = int(env.get("PING_INTERVAL", "1200"))
     HAS_SSL = str(env.get("HAS_SSL", "0").lower()) in ("1", "true", "t", "yes", "y")
     NO_PORT = str(env.get("NO_PORT", "0").lower()) in ("1", "true", "t", "yes", "y")
-    FQDN = str(env.get("FQDN", BIND_ADDRESS))
+
+    # Try to get FQDN from env or fallback to Heroku app name if available
+    FQDN = env.get("FQDN")
+    if not FQDN or FQDN in ["0.0.0.0", "localhost", "127.0.0.1"]:
+        APP_NAME = env.get("APP_NAME")  # Set this in Heroku Config Vars
+        if APP_NAME:
+            FQDN = f"{APP_NAME}.herokuapp.com"
+        else:
+            FQDN = BIND_ADDRESS
+
     URL = "http{}://{}{}/".format(
         "s" if HAS_SSL else "", FQDN, "" if NO_PORT else ":" + str(PORT)
     )
-
