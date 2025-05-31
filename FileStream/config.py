@@ -29,19 +29,18 @@ class Telegram:
 class Server:
     PORT = int(env.get("PORT", 8080))
     BIND_ADDRESS = str(env.get("BIND_ADDRESS", "0.0.0.0"))
-    PING_INTERVAL = int(env.get("PING_INTERVAL", "1200"))
+    PING_INTERVAL = int(env.get("PING_INTERVAL", 1200))
     HAS_SSL = str(env.get("HAS_SSL", "0").lower()) in ("1", "true", "t", "yes", "y")
-    NO_PORT = str(env.get("NO_PORT", "0").lower()) in ("1", "true", "t", "yes", "y")
-
-    # Try to get FQDN from env or fallback to Heroku app name if available
+    NO_PORT = True  # Force this to True for Heroku
+    
+    # Get FQDN from env or use Heroku app name
     FQDN = env.get("FQDN")
     if not FQDN or FQDN in ["0.0.0.0", "localhost", "127.0.0.1"]:
-        APP_NAME = env.get("filestreambotpbail")  # Set this in Heroku Config Vars
+        APP_NAME = env.get("HEROKU_APP_NAME")  # Make sure this is set in Config Vars
         if APP_NAME:
             FQDN = f"{APP_NAME}.herokuapp.com"
         else:
             FQDN = BIND_ADDRESS
 
-  URL = "http{}://{}{}/".format(
-    "s" if HAS_SSL else "", FQDN, ""
-)
+    URL = "http{}://{}/".format(
+        "s" if HAS_SSL else "", FQDN)
