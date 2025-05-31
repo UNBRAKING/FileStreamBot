@@ -36,7 +36,7 @@ class Server:
     # Try to get FQDN from env or fallback to Heroku app name if available
     FQDN = env.get("FQDN")
     if not FQDN or FQDN in ["0.0.0.0", "localhost", "127.0.0.1"]:
-        APP_NAME = env.get("filestreambotpbail")  # Set this in Heroku Config Vars
+        APP_NAME = env.get("APP_NAME")  # Set this in Heroku Config Vars
         if APP_NAME:
             FQDN = f"{APP_NAME}.herokuapp.com"
         else:
